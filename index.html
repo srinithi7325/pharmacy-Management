@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medics - Pharmacy Management</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header class="glass-header" id="main-header" style="display: none;">
+            <div class="logo">💊 Medics</div>
+            <div class="user-info">
+                <span id="user-role-badge" class="badge"></span>
+                <span id="user-greeting"></span>
+                <button id="logout-btn" class="btn btn-outline" onclick="app.logout()">Logout</button>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Login View -->
+            <section id="login-view" class="view active">
+                <div class="glass-card login-card">
+                    <div class="brand">
+                        <div class="icon">💊</div>
+                        <h1>Medics</h1>
+                        <p>Pharmacy Management System</p>
+                    </div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required placeholder="admin@medics.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <p class="form-error" id="login-error"></p>
+                    </form>
+                    <div class="text-center mt-3">
+                        <small>Don't have a customer account? <a href="#" onclick="app.showRegister(event)">Sign up here</a></small>
+                    </div>
+                    <div class="demo-info">
+                        <small><b>Demo Accounts:</b> admin@medics.com | pharm@medics.com | supp@medics.com | cust@medics.com (Password: 1234)</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Register View (Customer Only) -->
+            <section id="register-view" class="view">
+                <div class="glass-card login-card">
+                    <div class="brand">
+                        <div class="icon">🛍️</div>
+                        <h1>Create Account</h1>
+                        <p>Join as a Customer</p>
+                    </div>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="reg-name">Full Name</label>
+                            <input type="text" id="reg-name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email</label>
+                            <input type="email" id="reg-email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <input type="password" id="reg-password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                        <p class="form-error" id="register-error"></p>
+                    </form>
+                    <div class="text-center mt-3">
+                        <small>Already have an account? <a href="#" onclick="app.showLogin(event)">Log in</a></small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin View -->
+            <section id="admin-view" class="view">
+                <div class="dashboard-header">
+                    <h2>Admin Dashboard</h2>
+                    <button class="btn btn-primary" onclick="adminController.openAddUserModal()">+ Add New User</button>
+                </div>
+                <div class="glass-card">
+                    <h3>Manage Users</h3>
+                    <div class="table-responsive">
+                        <table id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pharmacist View -->
+            <section id="pharmacist-view" class="view">
+                <div class="dashboard-header">
+                    <h2>Pharmacist Dashboard</h2>
+                    <button class="btn btn-primary" onclick="pharmacistController.openAddMedicineModal()">+ Add Medicine</button>
+                </div>
+                <div class="glass-card mb-4">
+                    <h3>Inventory Management</h3>
+                    <div class="table-responsive">
+                        <table id="medicines-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Batch No</th>
+                                    <th>Expiry Date</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicines-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Supplier View -->
+            <section id="supplier-view" class="view">
+                <div class="dashboard-header">
+                    <h2>Supplier Dashboard</h2>
+                </div>
+                
+                <div class="glass-card mb-4">
+                    <h3>My Supplied Medicines</h3>
+                    <div class="table-responsive">
+                        <table id="supplier-medicines-table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine Name</th>
+                                    <th>Batch No</th>
+                                    <th>Expiry Date</th>
+                                    <th>Current Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplier-medicines-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Alerts & Requests</h3>
+                    <div class="alerts-container" id="supplier-alerts-container">
+                        <!-- Alerts injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer View -->
+            <section id="customer-view" class="view">
+                <div class="dashboard-header">
+                    <h2>Customer Dashboard</h2>
+                    <div class="cart-summary" style="display: flex; gap: 1rem;">
+                        <button class="btn btn-outline" id="toggle-history-btn" onclick="customerController.toggleHistory()">View Order History</button>
+                        <button class="btn btn-primary" onclick="customerController.openCartModal()">
+                            🛒 Cart (<span id="cart-count">0</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Browse Medicines Section -->
+                <div id="customer-browse-section">
+                    <div class="glass-card mb-4" style="padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex-grow: 1; max-width: 500px;">
+                            <input type="text" id="med-search" placeholder="Search medicines by name..." oninput="customerController.handleSearch()" style="margin-bottom: 0;">
+                        </div>
+                        <div class="pagination-controls" style="display: flex; align-items: center; gap: 1rem;">
+                            <button class="btn btn-outline" onclick="customerController.prevPage()">Previous</button>
+                            <span id="page-indicator" style="font-weight: 600; color: var(--primary);">Page 1</span>
+                            <button class="btn btn-outline" onclick="customerController.nextPage()">Next</button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="medicine-grid" id="customer-medicine-grid">
+                            <!-- Medicine cards injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order History Section -->
+                <div id="customer-history-section" style="display: none;">
+                    <div class="glass-card">
+                        <h3>My Order History</h3>
+                        <div class="table-responsive">
+                            <table id="order-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Address</th>
+                                        <th>Items Ordered</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="order-history-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals (Hidden by default) -->
+    <!-- Admin Add User Modal -->
+    <div id="add-user-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Add User</h3>
+                <span class="close" onclick="adminController.closeModal()">&times;</span>
+            </div>
+            <form id="add-user-form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="new-user-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="new-user-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="new-user-role">
+                        <option value="Pharmacist">Pharmacist</option>
+                        <option value="Supplier">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="new-user-password" required value="1234">
+                </div>
+                <button type="submit" class="btn btn-primary">Save User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pharmacist Add Medicine Modal -->
+    <div id="add-med-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Add Medicine</h3>
+                <span class="close" onclick="pharmacistController.closeModal()">&times;</span>
+            </div>
+            <form id="add-med-form">
+                <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" id="med-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Batch No</label>
+                    <input type="text" id="med-batch" required>
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="med-expiry" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="med-qty" required min="1">
+                </div>
+                <div class="form-group">
+                    <label>Supplier</label>
+                    <select id="med-supplier" required></select>
+                </div>
+                <p id="med-error" class="form-error"></p>
+                <button type="submit" class="btn btn-primary">Save Medicine</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content glass-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Checkout Cart</h3>
+                <span class="close" onclick="customerController.closeCartModal()">&times;</span>
+            </div>
+            <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                <table id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-table-body"></tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <textarea id="checkout-address" rows="3" required placeholder="Enter your full residential address..." style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: var(--radius); resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="customerController.confirmOrder()">Confirm Order</button>
+                <button class="btn btn-danger" style="flex: 1;" onclick="customerController.closeCartModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

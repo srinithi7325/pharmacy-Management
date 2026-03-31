@@ -1,0 +1,15 @@
+{
+  "name": "medi-hub-backend",
+  "version": "1.0.0",
+  "description": "Backend for Medi Hub Pharmacy System",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "mysql2": "^3.9.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
