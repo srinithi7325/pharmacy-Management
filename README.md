@@ -32,10 +32,46 @@ Medics is a fully functional, front-end Single Page Application (SPA) designed t
   * Real-time DOM manipulation and rendering.
 
 ## 🚀 How to Run Locally
-Because this application relies entirely on Vanilla Javascript and LocalStorage, there is zero setup required.
+This app now uses the Node/Express backend plus MySQL for shared realtime data.
+
 1. Clone the repository.
-2. Open `index.html` in any modern web browser (Chrome, Firefox, Edge, Safari).
-3. The database will automatically seed with **4 default user accounts** and **25 distinct medicines**.
+2. Run the SQL in `backend/init.sql` to create the `medihub` database and tables.
+3. Update the MySQL credentials inside `backend/server.js`.
+4. Install dependencies with `npm install`.
+5. Start the app with `npm start`.
+6. Open `http://localhost:3000` in your browser.
+
+## Real-Time MySQL Backend
+`backend/server.js` now includes a live data stream on top of MySQL using Server-Sent Events (SSE).
+
+1. Create the MySQL schema with `backend/init.sql`.
+2. Update the MySQL credentials inside `backend/server.js`.
+3. Start the backend with `npm start`.
+4. Log in through `/api/login` to receive a JWT.
+5. Fetch the current snapshot from `/api/data`.
+6. Subscribe to `/api/data/stream` to receive `data-sync` events whenever data changes.
+
+## Project Structure
+- `frontend/`: browser files like `index.html`, `script.js`, `style.css`
+- `backend/`: Express server and SQL schema
+- `server.js`: small compatibility entry file that forwards to `backend/server.js`
+
+Example client flow:
+
+```js
+const token = 'YOUR_JWT_TOKEN';
+
+const snapshot = await fetch('/api/data', {
+  headers: { Authorization: `Bearer ${token}` }
+}).then(r => r.json());
+
+const stream = new EventSource(`/api/data/stream?token=${encodeURIComponent(token)}`);
+
+stream.addEventListener('data-sync', (event) => {
+  const { reason, snapshot } = JSON.parse(event.data);
+  console.log('Live update:', reason, snapshot);
+});
+```
 
 
 ## 🔑 Demo Accounts

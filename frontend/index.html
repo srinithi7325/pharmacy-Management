@@ -110,6 +110,24 @@
                     <button class="btn btn-primary" onclick="pharmacistController.openAddMedicineModal()">+ Add Medicine</button>
                 </div>
                 <div class="glass-card mb-4">
+                    <h3>Customer Requests</h3>
+                    <div class="table-responsive">
+                        <table id="pharmacist-requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Medicine</th>
+                                    <th>Order ID</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pharmacist-requests-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="glass-card mb-4">
                     <h3>Inventory Management</h3>
                     <div class="table-responsive">
                         <table id="medicines-table">
@@ -195,6 +213,12 @@
                 <!-- Order History Section -->
                 <div id="customer-history-section" style="display: none;">
                     <div class="glass-card">
+                        <h3>Customer Alerts</h3>
+                        <div id="customer-notifications-list" class="alerts-container" style="margin-bottom: 1.5rem;">
+                            <!-- Customer alerts injected here -->
+                        </div>
+                    </div>
+                    <div class="glass-card">
                         <h3>My Order History</h3>
                         <div class="table-responsive">
                             <table id="order-history-table">
@@ -204,6 +228,7 @@
                                         <th>Date</th>
                                         <th>Address</th>
                                         <th>Items Ordered</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="order-history-body"></tbody>

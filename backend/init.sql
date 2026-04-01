@@ -1,5 +1,3 @@
-CREATE DATABASE medihub;
-USE medihub;
 CREATE DATABASE IF NOT EXISTS medihub;
 USE medihub;
 
@@ -15,9 +13,13 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS stock (
     id INT AUTO_INCREMENT PRIMARY KEY,
     medicine VARCHAR(255) NOT NULL,
+    batchNo VARCHAR(100),
+    expiryDate DATE,
     quantity INT NOT NULL,
-    manufactureDate DATE,
-    price DECIMAL(10, 2)
+    supplierId INT,
+    imageUrl TEXT,
+    price DECIMAL(10, 2),
+    manufactureDate DATE
 );
 
 CREATE TABLE IF NOT EXISTS sales (
@@ -30,14 +32,16 @@ CREATE TABLE IF NOT EXISTS sales (
 
 CREATE TABLE IF NOT EXISTS orders (
     orderId VARCHAR(255) PRIMARY KEY,
-    medicine VARCHAR(255),
+    medicine TEXT,
     quantity INT,
     totalPrice DECIMAL(10, 2),
     username VARCHAR(255),
     deliveryAddress TEXT,
     paymentMethod VARCHAR(50),
     date DATETIME,
-    status VARCHAR(50)
+    status VARCHAR(50),
+    customerId INT,
+    items JSON
 );
 
 CREATE TABLE IF NOT EXISTS feedback (
@@ -53,5 +57,9 @@ CREATE TABLE IF NOT EXISTS notifications (
     date DATETIME,
     username VARCHAR(255),
     relatedOrderId VARCHAR(255),
-    type VARCHAR(50)
+    type VARCHAR(50),
+    supplierId INT,
+    isRead BOOLEAN DEFAULT FALSE,
+    medicineName VARCHAR(255),
+    actionStatus VARCHAR(50) DEFAULT 'pending'
 );
